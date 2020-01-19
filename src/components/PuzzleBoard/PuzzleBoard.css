@@ -1,0 +1,25 @@
+.puzzleBoard {
+  height: 300px;
+  margin: auto;
+  background-color: #1A9258;
+}
+
+.puzzleWrapper {
+  height: 40px;
+  display: inline-flex;
+  flex-direction: row
+}
+
+.puzzleLetter {
+  border: solid 1px black;
+  padding: 20px;
+  background-color: white;
+}
+
+.runningScore {
+  height: 50px;
+  width: 10%;
+  border: solid 1px black;
+  position: absolute;
+  
+}
