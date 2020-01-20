@@ -1,70 +1,137 @@
-import React from 'react';
-import styles from './components/PuzzleBoard/PuzzleBoard.css';
-import phrases from './puzzleBank/phrases.js';
+import React from "react";
+import styles from "./components/PuzzleBoard/PuzzleBoard.css";
+import phrases from "./puzzleBank/phrases.js";
+import categories from "./puzzleBank/categories";
 
-
-class App extends React.Component  {
+class App extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      allLetters:
-        ['a','b','c','d','e','f','g','h','i','j','k','l','m','n','o','p','q','r','s','t','u','v','w','x','y','z'],
+      allLetters: [
+        "a",
+        "b",
+        "c",
+        "d",
+        "e",
+        "f",
+        "g",
+        "h",
+        "i",
+        "j",
+        "k",
+        "l",
+        "m",
+        "n",
+        "o",
+        "p",
+        "q",
+        "r",
+        "s",
+        "t",
+        "u",
+        "v",
+        "w",
+        "x",
+        "y",
+        "z"
+      ],
       currentPuzzle: [],
-      currentTurnLetter: null,
+      currentTurnLetter: "",
       lettersUsed: [],
       allPuzzles: phrases,
-               wheelScoreValues: [100, 200, 300, 400, 500, 'bankrupt'],
-      runningScore : 0,
+      wheelScoreValues: [100, 200, 300, 400, 500, "bankrupt"],
+      runningScore: 0,
       costOfVowel: 100,
+      specialChars: ["&", "'", "!", "?", ","],
+      lettersInPuzzle: []
     };
   }
 
-    retrieveNewPuzzle = () => {
-      let puzzle = phrases[Math.floor(Math.random() * phrases.length)];
-      return puzzle.split('');
-    }
+  retrieveNewCategory = () => {
+    const category = categories[Math.floor(Math.random() * categories.length)];
+    return category;
+  };
 
-    componentWillMount = () => {
-      const puzzle = this.retrieveNewPuzzle();
-      this.setState({currentPuzzle : puzzle});
-    }
+  componentWillMount = () => {
+    const category = this.retrieveNewCategory();
+    const puzzle = phrases[category].toUpperCase().split("");
+    this.setState({ currentCategory: category });
+    this.setState({ currentPuzzle: puzzle });
+    console.log(puzzle.join(""));
+  };
 
-    handleButtonRefresh = () => {
-      const puzzle = this.retrieveNewPuzzle();
-      this.setState({currentPuzzle : puzzle});
-    }
+  handleButtonRefresh = () => {
+    const category = this.retrieveNewCategory();
+    const puzzle = phrases[category].toUpperCase().split("");
+    this.setState({ currentCategory: category });
+    this.setState({ currentPuzzle: puzzle });
+    console.log(puzzle.join(""));
+  };
+
+  handleInputTurnLetter = e => {
+    this.setState({ currentTurnLetter: e.target.value.toUpperCase() });
+  };
+
+  revealInitialPuzzle = () => {
+    return this.state.currentPuzzle.map(function(val, ind) {
+      return "?";
+    });
+  };
+
+  handleRevealCorrectLetter = () => {
+    // const currentTurnLetter = this.state.currentTurnLetter;
+  };
+
+  persistCorrectLetters = () => {
+    console.log(this.state.lettersUsed);
+
+    // return this.state.lettersUsed.map(function(letter, ind) {
+    // if (this.state.lettersUsed.indexOf(letter) !== -1) {
+    // }
+    // return letter;
+    // });
+    //if this.state.lettersUsed.indexOf(letter) !== -1
+  };
 
   render = () => {
-    let puzzle = this.state.currentPuzzle;
-    //render puzzle spaces with ? showing for each space
-
-    //set score to 0
-      return (
+    return (
       <div className="puzzleBoardWrapper">
         <div className="puzzleBoard">
-            {puzzle.map(function(letter, index){
-              if(letter !== ' '){
-                return (
-                  <div key={index} className="puzzleWrapper">
-                    <div className="puzzleLetter">{letter.toUpperCase()}</div>
-                  </div>
-                )
-              }
-              else {
-                return(
-                  <div key={index}>
-                    &nbsp;
-                  </div>
-                )
-              }
-            }) }
+          <div className="puzzleLetter">{this.revealInitialPuzzle()}</div>
+          <div className="currentCategory">{this.state.currentCategory}</div>
+          {this.persistCorrectLetters()}
         </div>
-            <div className="runningScore"></div>
-            <div>
-              <button onClick={this.handleButtonRefresh}>Start New Game</button>
-            </div>
+        <div className="scoreWrapper">
+          <span id="runningScore">{this.state.runningScore}</span>
+        </div>
+        <div>
+          <button
+            className="refreshPuzzleButton"
+            onClick={this.handleButtonRefresh}
+          >
+            Start New Game
+          </button>
+        </div>
+        <label htmlFor="pickALetter">Enter a Letter</label>
+        <input
+          maxLength="1"
+          onChange={this.handleInputTurnLetter}
+          type="text"
+          placeholder="a, b, c, etc."
+        ></input>
+        <button
+          onClick={() =>
+            this.setState({
+              lettersUsed: this.state.lettersUsed.concat([
+                this.state.currentTurnLetter
+              ])
+            })
+          }
+        >
+          Call out {this.state.currentTurnLetter}{" "}
+        </button>
       </div>
     );
-  }
+  };
 }
 export default App;

@@ -1,13 +1,14 @@
-export default [
-  'wheel of fortune',
-  'DISAPPEARING ACT',
-  'TEACHERS AND PUPILS',
-  'WINNING A SPELLING BEE',
-  'BELLY & BREAK DANCING',
-  'TRAVELING THROUGH FRANCE',
-  'ROOSTERS AND HENS',
-  'STALLIONS AND MARES',
-  'GANDERS AND GEESE',
-  'ON THE CUTTING EDGE',
-  'OFFBEAT MOVIE'
-];
+export default {
+  Action: "DISAPPEARING ACT",
+  "Before & After": "BELLY & BREAK DANCING",
+  "Food & Drink": "Bagel with cream cheese",
+  Games: "wheel of fortune",
+  "Living Things": "GANDERS AND GEESE",
+  "Movie Title": "ON THE CUTTING EDGE",
+  People: "TEACHERS AND PUPILS",
+  Phrase: "It's a beautiful day in the neighborhood",
+  Thing: "OFFBEAT MOVIE",
+  "Toss up 1": "ROOSTERS AND HENS",
+  "Toss up 2": "STALLIONS AND MARES",
+  Travel: "TRAVELING THROUGH FRANCE"
+};

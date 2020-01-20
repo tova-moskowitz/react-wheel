@@ -1,25 +1,52 @@
 .puzzleBoard {
-  height: 300px;
+  /* height: 300px; */
   margin: auto;
-  background-color: #1A9258;
+  background-color: #1a9258;
+  text-align: center;
+  display: block;
+  overflow: auto;
 }
 
 .puzzleWrapper {
   height: 40px;
   display: inline-flex;
-  flex-direction: row
+  flex-direction: row;
 }
 
 .puzzleLetter {
   border: solid 1px black;
   padding: 20px;
-  background-color: white;
+  background: grey;
+  /* background-image: url("../../wofLogo.png");
+  background-size: 50px;
+  background-repeat: no-repeat;
+  background-position: center center; */
 }
 
-.runningScore {
+.currentCategory {
+  margin-top: 100px;
+}
+
+.scoreWrapper {
   height: 50px;
-  width: 10%;
-  border: solid 1px black;
-  position: absolute;
-  
+  width: 25%;
+  margin-right: 50px;
+  float: left;
+  border: solid 1px #000000;
+  background-color: grey;
+  text-align: center;
+  line-height: 50px;
+}
+
+#runningScore {
+  color: #ffffff;
+  width: 100%;
+}
+
+.refreshPuzzleButton {
+  float: left;
+  clear: both;
+  height: 80px;
+  width: 200px;
+  background-color: cornflowerblue;
 }
