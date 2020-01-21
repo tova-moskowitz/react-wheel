@@ -54,7 +54,10 @@ class App extends React.Component {
 
   renderPuzzle = () => {
     return this.state.currentPuzzle.map((letter, index) => {
-      if (this.state.correctlyGuessedLetters.indexOf(letter) !== -1) {
+      if (
+        this.state.correctlyGuessedLetters.indexOf(letter) !== -1 ||
+        this.state.specialChars.indexOf(letter) !== -1
+      ) {
         return <span key={index}>{letter}</span>;
       } else if (letter === " ") {
         return <span key={index}>&nbsp;&nbsp;</span>;
@@ -76,6 +79,8 @@ class App extends React.Component {
     const puzzle = phrases[category].toUpperCase().split("");
     this.setState({ currentCategory: category });
     this.setState({ currentPuzzle: puzzle });
+    this.setState({ correctlyGuessedLetters: [] });
+    this.setState({ allUsedLetters: [] });
   };
 
   handleInputTurnLetter = e => {
@@ -112,9 +117,11 @@ class App extends React.Component {
     return (
       <div className="puzzleBoardWrapper">
         <div className="puzzleBoard">
-          <div className="puzzleLetter">{this.renderPuzzle()}</div>
-          <div className="currentCategory">{this.state.currentCategory}</div>
+          {/* {/* <div className="puzzleLetter"> */}
+          {this.renderPuzzle()}
         </div>
+        <div className="currentCategory">{this.state.currentCategory}</div>
+        {/* </div> */}
         <div className="scoreWrapper">
           <span id="runningScore">{this.state.runningScore}</span>
         </div>
@@ -131,7 +138,6 @@ class App extends React.Component {
           maxLength="1"
           onChange={this.handleInputTurnLetter}
           type="text"
-          placeholder="a, b, c, etc."
         ></input>
         <button onClick={this.wrapperOnClick}>
           I'll take the {this.state.currentTurnLetter}

@@ -1,10 +1,9 @@
 .puzzleBoard {
-  /* height: 300px; */
+  height: 100px;
   margin: auto;
   background-color: #1a9258;
   text-align: center;
-  display: block;
-  overflow: auto;
+  padding: 20px;
 }
 
 .puzzleWrapper {
@@ -21,10 +20,6 @@
   background-size: 50px;
   background-repeat: no-repeat;
   background-position: center center; */
-}
-
-.currentCategory {
-  margin-top: 100px;
 }
 
 .scoreWrapper {
