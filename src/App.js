@@ -114,7 +114,6 @@ class App extends React.Component {
         <div className="puzzleBoard">
           <div className="puzzleLetter">{this.renderPuzzle()}</div>
           <div className="currentCategory">{this.state.currentCategory}</div>
-          {this.persistCorrectLetters()}
         </div>
         <div className="scoreWrapper">
           <span id="runningScore">{this.state.runningScore}</span>
@@ -142,11 +141,3 @@ class App extends React.Component {
   };
 }
 export default App;
-
-// () =>
-// this.setState({
-//   allUsedLetters: this.state.allUsedLetters.concat([
-//     this.state.currentTurnLetter
-//   ])
-// })
-// }
