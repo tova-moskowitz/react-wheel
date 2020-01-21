@@ -37,13 +37,13 @@ class App extends React.Component {
       ],
       currentPuzzle: [],
       currentTurnLetter: "",
-      lettersUsed: [],
+      allUsedLetters: [],
       allPuzzles: phrases,
       wheelScoreValues: [100, 200, 300, 400, 500, "bankrupt"],
       runningScore: 0,
       costOfVowel: 100,
       specialChars: ["&", "'", "!", "?", ","],
-      lettersInPuzzle: []
+      correctlyGuessedLetters: []
     };
   }
 
@@ -52,12 +52,23 @@ class App extends React.Component {
     return category;
   };
 
+  renderPuzzle = () => {
+    return this.state.currentPuzzle.map((letter, index) => {
+      if (this.state.correctlyGuessedLetters.indexOf(letter) !== -1) {
+        return <span key={index}>{letter}</span>;
+      } else if (letter === " ") {
+        return <span key={index}>&nbsp;&nbsp;</span>;
+      } else {
+        return <span key={index}>_ </span>;
+      }
+    });
+  };
+
   componentWillMount = () => {
     const category = this.retrieveNewCategory();
     const puzzle = phrases[category].toUpperCase().split("");
     this.setState({ currentCategory: category });
     this.setState({ currentPuzzle: puzzle });
-    console.log(puzzle.join(""));
   };
 
   handleButtonRefresh = () => {
@@ -65,39 +76,43 @@ class App extends React.Component {
     const puzzle = phrases[category].toUpperCase().split("");
     this.setState({ currentCategory: category });
     this.setState({ currentPuzzle: puzzle });
-    console.log(puzzle.join(""));
   };
 
   handleInputTurnLetter = e => {
     this.setState({ currentTurnLetter: e.target.value.toUpperCase() });
   };
 
-  revealInitialPuzzle = () => {
-    return this.state.currentPuzzle.map(function(val, ind) {
-      return "?";
+  handleSetStatecorrectlyGuessedLetters = () => {
+    this.state.currentPuzzle.map(letter => {
+      if (letter === this.state.currentTurnLetter) {
+        this.setState({
+          correctlyGuessedLetters: this.state.correctlyGuessedLetters.concat([
+            letter
+          ])
+        });
+      }
+      return true;
     });
   };
 
-  handleRevealCorrectLetter = () => {
-    // const currentTurnLetter = this.state.currentTurnLetter;
+  handleSetStateallUsedLetters = () => {
+    this.setState({
+      allUsedLetters: this.state.allUsedLetters.concat([
+        this.state.currentTurnLetter
+      ])
+    });
   };
 
-  persistCorrectLetters = () => {
-    console.log(this.state.lettersUsed);
-
-    // return this.state.lettersUsed.map(function(letter, ind) {
-    // if (this.state.lettersUsed.indexOf(letter) !== -1) {
-    // }
-    // return letter;
-    // });
-    //if this.state.lettersUsed.indexOf(letter) !== -1
+  wrapperOnClick = () => {
+    this.handleSetStateallUsedLetters();
+    this.handleSetStatecorrectlyGuessedLetters();
   };
 
   render = () => {
     return (
       <div className="puzzleBoardWrapper">
         <div className="puzzleBoard">
-          <div className="puzzleLetter">{this.revealInitialPuzzle()}</div>
+          <div className="puzzleLetter">{this.renderPuzzle()}</div>
           <div className="currentCategory">{this.state.currentCategory}</div>
           {this.persistCorrectLetters()}
         </div>
@@ -119,19 +134,19 @@ class App extends React.Component {
           type="text"
           placeholder="a, b, c, etc."
         ></input>
-        <button
-          onClick={() =>
-            this.setState({
-              lettersUsed: this.state.lettersUsed.concat([
-                this.state.currentTurnLetter
-              ])
-            })
-          }
-        >
-          Call out {this.state.currentTurnLetter}{" "}
+        <button onClick={this.wrapperOnClick}>
+          I'll take the {this.state.currentTurnLetter}
         </button>
       </div>
     );
   };
 }
 export default App;
+
+// () =>
+// this.setState({
+//   allUsedLetters: this.state.allUsedLetters.concat([
+//     this.state.currentTurnLetter
+//   ])
+// })
+// }
