@@ -69,6 +69,7 @@ class App extends React.Component {
   renderPuzzle = () => {
     return this.state.currentPuzzle.map((letter, index) => {
       if (
+        // correctly guessed letters
         this.state.correctlyGuessedLetters.indexOf(letter) !== -1 ||
         this.state.specialChars.indexOf(letter) !== -1
       ) {
@@ -76,7 +77,8 @@ class App extends React.Component {
       } else if (letter === " ") {
         return <span key={index}>&nbsp;&nbsp;&nbsp;</span>;
       } else {
-        return <span key={index}>___ </span>;
+        // unguessed letters
+        return <span key={index}>__ </span>;
       }
     });
   };
@@ -152,11 +154,23 @@ class App extends React.Component {
   wrapperGuessLetterOnClick = () => {
     this.handleSetStateAllUsedLetters();
     this.handleSetStatecorrectlyGuessedLetters();
-    this.getDollarAmountPerTurn();
+
     this.updateRunningScore();
+
+    this.setState({
+      wheelSpinValue: this.getDollarAmountPerTurn()
+    });
   };
 
   updateRunningScore = () => {
+    let count = 0;
+
+    this.state.currentPuzzle.map(letter => {
+      if (this.state.currentTurnLetter === letter) {
+        count++;
+      }
+    });
+
     return this.state.currentPuzzle.map((letter, index) => {
       if (
         this.state.currentTurnLetter === letter &&
@@ -164,8 +178,7 @@ class App extends React.Component {
       ) {
         this.setState({
           runningScore:
-            this.state.runningScore +
-            this.state.wheelSpinValue * this.state.correctLetterCount
+            this.state.runningScore + this.state.wheelSpinValue * count
         });
       } else {
         return this.state.runningScore;
