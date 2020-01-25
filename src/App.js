@@ -39,24 +39,31 @@ class App extends React.Component {
     };
   }
 
-  retrieveNewCategory = () => {
-    const categories = Object.keys(phrases);
-    const category = categories[Math.floor(Math.random() * categories.length)];
-    this.setState({ currentCategory: category });
-    const puzzle =
-      phrases[category][Math.floor(Math.random() * phrases[category].length)];
-    return puzzle;
+  getRandom = fromArray =>
+    fromArray[Math.floor(Math.random() * fromArray.length)];
+
+  returnCategoryAndPuzzle = () => {
+    /**
+     * phrases: {
+     *  'things': ['apple', 'my hat']
+     * }
+     */
+
+    const category = this.getRandom(Object.keys(phrases)); // 'things'
+    const puzzle = this.getRandom(phrases[category])
+      .toUpperCase()
+      .split(""); // ['a','p','p','l',e']
+
+    return {
+      category,
+      puzzle
+    };
   };
 
   //Figure out why this is not working - Jan 21, 2019
   getDollarAmountPerTurn = () => {
-    const score = this.state.wheelScoreValues[
-      Math.floor(Math.random() * this.state.wheelScoreValues.length)
-    ];
-    this.setState({ currentScoreValue: score });
-    if (score === "bankrupt") {
-      this.setState({ runningScore: 0 });
-    }
+    const spin = this.getRandom(this.state.wheelScoreValues);
+    return spin === "bankrupt" ? 0 : spin;
   };
 
   renderPuzzle = () => {
@@ -75,34 +82,32 @@ class App extends React.Component {
   };
 
   UNSAFE_componentWillMount = () => {
-    const puzzle = this.retrieveNewCategory()
-      .toUpperCase()
-      .split("");
-    this.setState({ currentPuzzle: puzzle });
-    this.getDollarAmountPerTurn();
+    const puzzleData = this.returnCategoryAndPuzzle();
+    const wheelSpinValue = this.getDollarAmountPerTurn();
+
+    this.setState({
+      currentPuzzle: puzzleData.puzzle,
+      currentCategory: puzzleData.category,
+      wheelSpinValue
+    });
   };
 
   handleButtonRefresh = () => {
-    const puzzle = this.retrieveNewCategory()
-      .toUpperCase()
-      .split("");
-    this.setState({ currentPuzzle: puzzle });
+    const puzzleData = this.returnCategoryAndPuzzle();
+
+    this.setState({
+      currentPuzzle: puzzleData.puzzle,
+      currentCategory: puzzleData.category
+    });
+
     this.setState({ correctlyGuessedLetters: [] });
     this.setState({ allUsedLetters: [] });
     this.setState({ runningScore: 0 });
     this.setState({ correctLetterCount: 0 });
-    this.getDollarAmountPerTurn();
+    this.setState({ wheelSpinValue: this.getDollarAmountPerTurn() });
   };
 
   handleInputTurnLetter = e => {
-    let count = 0;
-    this.state.currentPuzzle.map(letter => {
-      if (e.target.value.toUpperCase() === letter) {
-        count++;
-      }
-    });
-
-    this.setState({ correctLetterCount: count });
     this.setState({ currentTurnLetter: e.target.value.toUpperCase() });
   };
 
