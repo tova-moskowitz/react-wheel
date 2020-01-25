@@ -1,70 +1,224 @@
-import React from 'react';
-import styles from './components/PuzzleBoard/PuzzleBoard.css';
-import phrases from './puzzleBank/phrases.js';
+import React from "react";
+import styles from "./components/PuzzleBoard/PuzzleBoard.css";
+import phrases from "./puzzleBank/phrases.js";
 
-
-class App extends React.Component  {
+class App extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      allLetters:
-        ['a','b','c','d','e','f','g','h','i','j','k','l','m','n','o','p','q','r','s','t','u','v','w','x','y','z'],
+      wheelScoreValues: [
+        400,
+        450,
+        500,
+        550,
+        600,
+        650,
+        700,
+        750,
+        800,
+        850,
+        900,
+        950,
+        1000,
+        2500,
+        3500,
+        5000,
+        "bankrupt"
+      ],
+      vowels: ["a", "e", "i", "o", "u"],
+      specialChars: ["&", "'", "!", "?", ","],
+
       currentPuzzle: [],
-      currentTurnLetter: null,
-      lettersUsed: [],
-      allPuzzles: phrases,
-               wheelScoreValues: [100, 200, 300, 400, 500, 'bankrupt'],
-      runningScore : 0,
+      allUsedLetters: [],
+      currentTurnLetter: "",
+      runningScore: 0,
       costOfVowel: 100,
+      correctlyGuessedLetters: [],
+      wheelSpinValue: 0,
+      correctLetterCount: 0
     };
   }
 
-    retrieveNewPuzzle = () => {
-      let puzzle = phrases[Math.floor(Math.random() * phrases.length)];
-      return puzzle.split('');
-    }
+  getRandom = fromArray =>
+    fromArray[Math.floor(Math.random() * fromArray.length)];
 
-    componentWillMount = () => {
-      const puzzle = this.retrieveNewPuzzle();
-      this.setState({currentPuzzle : puzzle});
-    }
+  returnCategoryAndPuzzle = () => {
+    /**
+     * phrases: {
+     *  'things': ['apple', 'my hat']
+     * }
+     */
 
-    handleButtonRefresh = () => {
-      const puzzle = this.retrieveNewPuzzle();
-      this.setState({currentPuzzle : puzzle});
+    const category = this.getRandom(Object.keys(phrases)); // 'things'
+    const puzzle = this.getRandom(phrases[category])
+      .toUpperCase()
+      .split(""); // ['a','p','p','l',e']
+
+    return {
+      category,
+      puzzle
+    };
+  };
+
+  //Figure out why this is not working - Jan 21, 2019
+  getDollarAmountPerTurn = () => {
+    const spin = this.getRandom(this.state.wheelScoreValues);
+    return spin === "bankrupt" ? 0 : spin;
+  };
+
+  renderPuzzle = () => {
+    return this.state.currentPuzzle.map((letter, index) => {
+      if (
+        // correctly guessed letters
+        this.state.correctlyGuessedLetters.indexOf(letter) !== -1 ||
+        this.state.specialChars.indexOf(letter) !== -1
+      ) {
+        return <span key={index}>{letter}</span>;
+      } else if (letter === " ") {
+        return <span key={index}>&nbsp;&nbsp;&nbsp;</span>;
+      } else {
+        // unguessed letters
+        return <span key={index}>__ </span>;
+      }
+    });
+  };
+
+  UNSAFE_componentWillMount = () => {
+    const puzzleData = this.returnCategoryAndPuzzle();
+    const wheelSpinValue = this.getDollarAmountPerTurn();
+
+    this.setState({
+      currentPuzzle: puzzleData.puzzle,
+      currentCategory: puzzleData.category,
+      wheelSpinValue
+    });
+  };
+
+  handleButtonRefresh = () => {
+    const puzzleData = this.returnCategoryAndPuzzle();
+
+    this.setState({
+      currentPuzzle: puzzleData.puzzle,
+      currentCategory: puzzleData.category
+    });
+
+    this.setState({ correctlyGuessedLetters: [] });
+    this.setState({ allUsedLetters: [] });
+    this.setState({ runningScore: 0 });
+    this.setState({ correctLetterCount: 0 });
+    this.setState({ wheelSpinValue: this.getDollarAmountPerTurn() });
+  };
+
+  handleInputTurnLetter = e => {
+    this.setState({ currentTurnLetter: e.target.value.toUpperCase() });
+  };
+
+  handleSetStatecorrectlyGuessedLetters = () => {
+    this.state.currentPuzzle.map(letter => {
+      if (letter === this.state.currentTurnLetter) {
+        this.setState({
+          correctlyGuessedLetters: this.state.correctlyGuessedLetters.concat([
+            letter
+          ])
+        });
+      }
+      return true;
+    });
+    if (
+      this.state.allUsedLetters.indexOf(
+        this.state.currentTurnLetter.toUpperCase()
+      ) !== -1
+    ) {
+      this.setState({
+        correctlyGuessedLetters: this.state.correctlyGuessedLetters
+      });
     }
+  };
+
+  handleSetStateAllUsedLetters = () => {
+    if (
+      this.state.allUsedLetters.indexOf(
+        this.state.currentTurnLetter.toUpperCase()
+      ) !== -1
+    ) {
+      this.setState({ allUsedLetters: this.state.allUsedLetters });
+    } else {
+      this.setState({
+        allUsedLetters: this.state.allUsedLetters.concat([
+          this.state.currentTurnLetter
+        ])
+      });
+    }
+  };
+
+  wrapperGuessLetterOnClick = () => {
+    this.handleSetStateAllUsedLetters();
+    this.handleSetStatecorrectlyGuessedLetters();
+
+    this.updateRunningScore();
+
+    this.setState({
+      wheelSpinValue: this.getDollarAmountPerTurn()
+    });
+  };
+
+  updateRunningScore = () => {
+    let count = 0;
+
+    this.state.currentPuzzle.map(letter => {
+      if (this.state.currentTurnLetter === letter) {
+        count++;
+      }
+    });
+
+    return this.state.currentPuzzle.map((letter, index) => {
+      if (
+        this.state.currentTurnLetter === letter &&
+        this.state.allUsedLetters.indexOf(letter) === -1
+      ) {
+        this.setState({
+          runningScore:
+            this.state.runningScore + this.state.wheelSpinValue * count
+        });
+      } else {
+        return this.state.runningScore;
+      }
+    });
+  };
+
+  updateScoreForVowels = () => {};
 
   render = () => {
-    let puzzle = this.state.currentPuzzle;
-    //render puzzle spaces with ? showing for each space
-
-    //set score to 0
-      return (
+    return (
       <div className="puzzleBoardWrapper">
         <div className="puzzleBoard">
-            {puzzle.map(function(letter, index){
-              if(letter !== ' '){
-                return (
-                  <div key={index} className="puzzleWrapper">
-                    <div className="puzzleLetter">{letter.toUpperCase()}</div>
-                  </div>
-                )
-              }
-              else {
-                return(
-                  <div key={index}>
-                    &nbsp;
-                  </div>
-                )
-              }
-            }) }
+          {/* {/* <div className="puzzleLetter"> */}
+          {this.renderPuzzle()}
         </div>
-            <div className="runningScore"></div>
-            <div>
-              <button onClick={this.handleButtonRefresh}>Start New Game</button>
-            </div>
+        <div className="currentCategory">{this.state.currentCategory}</div>
+        {/* </div> */}
+        <div className="scoreWrapper">
+          <span className="runningScore">{this.state.runningScore}</span>
+        </div>
+        <div>
+          <button
+            className="refreshPuzzleButton"
+            onClick={this.handleButtonRefresh}
+          >
+            Start New Game
+          </button>
+        </div>
+        <label htmlFor="pickALetter">Enter a Letter</label>
+        <input
+          maxLength="1"
+          onChange={this.handleInputTurnLetter}
+          type="text"
+        ></input>
+        <button onClick={this.wrapperGuessLetterOnClick}>
+          I'll take the {this.state.currentTurnLetter}
+        </button>
       </div>
     );
-  }
+  };
 }
 export default App;
