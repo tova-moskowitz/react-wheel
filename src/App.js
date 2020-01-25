@@ -1,7 +1,6 @@
 import React from "react";
 import styles from "./components/PuzzleBoard/PuzzleBoard.css";
 import phrases from "./puzzleBank/phrases.js";
-import categories from "./puzzleBank/categories";
 
 class App extends React.Component {
   constructor(props) {
@@ -24,19 +23,18 @@ class App extends React.Component {
         2500,
         3500,
         5000,
-        "loseaturn",
         "bankrupt"
       ],
       vowels: ["a", "e", "i", "o", "u"],
       specialChars: ["&", "'", "!", "?", ","],
-      allPuzzles: phrases,
+
       currentPuzzle: [],
       allUsedLetters: [],
       currentTurnLetter: "",
       runningScore: 0,
       costOfVowel: 100,
       correctlyGuessedLetters: [],
-      currentScoreValue: 0,
+      wheelSpinValue: 0,
       correctLetterCount: 0
     };
   }
@@ -162,7 +160,7 @@ class App extends React.Component {
         this.setState({
           runningScore:
             this.state.runningScore +
-            this.state.currentScoreValue * this.state.correctLetterCount
+            this.state.wheelSpinValue * this.state.correctLetterCount
         });
       } else {
         return this.state.runningScore;
@@ -182,7 +180,7 @@ class App extends React.Component {
         <div className="currentCategory">{this.state.currentCategory}</div>
         {/* </div> */}
         <div className="scoreWrapper">
-          <span id="runningScore">{this.state.runningScore}</span>
+          <span className="runningScore">{this.state.runningScore}</span>
         </div>
         <div>
           <button
