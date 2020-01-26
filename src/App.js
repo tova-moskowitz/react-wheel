@@ -1,6 +1,7 @@
 import React from "react";
 import styles from "./components/PuzzleBoard/PuzzleBoard.css";
 import phrases from "./puzzleBank/phrases.js";
+import PuzzleBoard from "./components/PuzzleBoard/puzzleBoard";
 
 class App extends React.Component {
   constructor(props) {
@@ -60,27 +61,9 @@ class App extends React.Component {
     };
   };
 
-  //Figure out why this is not working - Jan 21, 2019
   getDollarAmountPerTurn = () => {
     const spin = this.getRandom(this.state.wheelScoreValues);
     return spin === "bankrupt" ? 0 : spin;
-  };
-
-  renderPuzzle = () => {
-    return this.state.currentPuzzle.map((letter, index) => {
-      if (
-        // correctly guessed letters
-        this.state.correctlyGuessedLetters.indexOf(letter) !== -1 ||
-        this.state.specialChars.indexOf(letter) !== -1
-      ) {
-        return <span key={index}>{letter}</span>;
-      } else if (letter === " ") {
-        return <span key={index}>&nbsp;&nbsp;&nbsp;</span>;
-      } else {
-        // unguessed letters
-        return <span key={index}>__ </span>;
-      }
-    });
   };
 
   UNSAFE_componentWillMount = () => {
@@ -187,16 +170,16 @@ class App extends React.Component {
   };
 
   updateScoreForVowels = () => {};
-
   render = () => {
+    const { currentPuzzle, correctlyGuessedLetters, specialChars } = this.state;
     return (
       <div className="puzzleBoardWrapper">
-        <div className="puzzleBoard">
-          {/* {/* <div className="puzzleLetter"> */}
-          {this.renderPuzzle()}
-        </div>
+        <PuzzleBoard
+          puzzle={currentPuzzle}
+          correctlyGuessedLetters={correctlyGuessedLetters}
+          specialChars={specialChars}
+        />
         <div className="currentCategory">{this.state.currentCategory}</div>
-        {/* </div> */}
         <div className="scoreWrapper">
           <span className="runningScore">{this.state.runningScore}</span>
         </div>
