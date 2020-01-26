@@ -1,7 +1,8 @@
 import React from "react";
 import styles from "./components/PuzzleBoard/PuzzleBoard.css";
-import phrases from "./puzzleBank/phrases.js";
+import phrases from "./dataBank/phrases.js";
 import PuzzleBoard from "./components/PuzzleBoard/puzzleBoard";
+import RefreshPuzzleButton from "./components/RefreshPuzzleButton/refreshPuzzleButton";
 
 class App extends React.Component {
   constructor(props) {
@@ -28,7 +29,6 @@ class App extends React.Component {
       ],
       vowels: ["a", "e", "i", "o", "u"],
       specialChars: ["&", "'", "!", "?", ","],
-
       currentPuzzle: [],
       allUsedLetters: [],
       currentTurnLetter: "",
@@ -184,12 +184,7 @@ class App extends React.Component {
           <span className="runningScore">{this.state.runningScore}</span>
         </div>
         <div>
-          <button
-            className="refreshPuzzleButton"
-            onClick={this.handleButtonRefresh}
-          >
-            Start New Game
-          </button>
+          <RefreshPuzzleButton refreshButton={this.handleButtonRefresh} />
         </div>
         <label htmlFor="pickALetter">Enter a Letter</label>
         <input
